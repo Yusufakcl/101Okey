@@ -1,5 +1,8 @@
 import type { GameSession, Player, RoundState, GameSettings, Tile } from '../types/game.model.js';
 
+const TILE_COLORS: Tile['color'][] = ['Red', 'Blue', 'Black', 'Yellow'];
+const TILE_VALUES = Array.from({ length: 13 }, (_, index) => index + 1);
+
 /**
  * Yeni bir oyun oturumu başlatır
  * 4 oyuncu ile oyun başlar ve ilk dağıtıcı rastgele seçilir
@@ -78,6 +81,83 @@ export function initializeRound(dealerIndex: number): Omit<RoundState, 'deck' | 
         currentPlayerIndex: getFirstPlayerIndex(dealerIndex),
         dealerIndex,
         roundStatus: 'inProgress'
+    };
+}
+
+/**
+ * 106 taşı oluşturur ve karıştırır
+ */
+export function generateFullTileSet(): Tile[] {
+    const tiles: Tile[] = [];
+    let idCounter = 0;
+
+    // Standart taşlar (2 deste)
+    for (let deck = 0; deck < 2; deck++) {
+        for (const color of TILE_COLORS) {
+            for (const value of TILE_VALUES) {
+                tiles.push({
+                    id: idCounter++,
+                    color,
+                    value,
+                    isFalseJoker: false
+                });
+            }
+        }
+    }
+
+    // Sahte okey taşları (toplam 2 adet)
+    for (let i = 0; i < 2; i++) {
+        tiles.push({
+            id: idCounter++,
+            color: 'Black',
+            value: null,
+            isFalseJoker: true
+        });
+    }
+
+    return tiles;
+}
+
+function shuffleTiles(tiles: Tile[]): Tile[] {
+    const shuffled = [...tiles];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
+}
+
+export interface TileBaleSetup {
+    shuffledTiles: Tile[];
+    bales: Tile[][];
+    remainingTile: Tile;
+}
+
+/**
+ * 106 taşı karıştırır, 15 adet 7'li balya oluşturur ve 1 taşı artan olarak bırakır
+ */
+export function prepareTileBales(): TileBaleSetup {
+    const shuffledTiles = shuffleTiles(generateFullTileSet());
+    const bales: Tile[][] = [];
+
+    for (let baleIndex = 0; baleIndex < 15; baleIndex++) {
+        const start = baleIndex * 7;
+        const end = start + 7;
+        bales.push(shuffledTiles.slice(start, end));
+    }
+
+    const remainingTile = shuffledTiles[105];
+
+    if (!remainingTile) {
+        throw new Error('Karıştırılan taşlardan artan taş bulunamadı');
+    }
+
+    return {
+        shuffledTiles,
+        bales,
+        remainingTile
     };
 }
 
