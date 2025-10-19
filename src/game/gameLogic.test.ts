@@ -4,7 +4,8 @@ import {
     getFirstPlayerIndex,
     getNextPlayerIndex,
     startNewRound,
-    getDealerRotationSequence
+    getDealerRotationSequence,
+    prepareTileBales
 } from './gameLogic.js';
 import type { GameSettings } from '../types/game.model.js';
 
@@ -104,6 +105,19 @@ for (let round = 0; round < 4; round++) {
     console.log(`  İlk Oynayan: ${firstPlayer.playerId} (indeks: ${firstPlayerIdx})`);
     console.log(`  Oyun Sırası: ${firstPlayer.playerId} → ${player2.playerId} → ${player3.playerId} → ${player4.playerId}`);
 }
+
+// 6. Taş Hazırlama Adımı
+console.log('\n6. TAŞ HAZIRLAMA ADIMI');
+console.log('-'.repeat(50));
+
+const tileSetup = prepareTileBales();
+console.log(`Toplam Karıştırılan Taş: ${tileSetup.shuffledTiles.length}`);
+console.log(`Oluşturulan Balya Sayısı: ${tileSetup.bales.length}`);
+console.log('Her balyadaki taş sayısı doğrulaması:');
+tileSetup.bales.forEach((bale, index) => {
+    console.log(`  Balya ${index + 1}: ${bale.length} taş`);
+});
+console.log(`Artan Taş ID: ${tileSetup.remainingTile.id}`);
 
 console.log('\n=== Test Tamamlandı ===');
 

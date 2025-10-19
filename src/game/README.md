@@ -115,6 +115,17 @@ const roundState = initializeRound(dealerIndex);
 
 ---
 
+### `prepareTileBales()`
+Oyun taşlarını karıştırır, 15 adet 7'li balya oluşturur ve artan 1 taşı döner.
+
+```typescript
+const tileSetup = prepareTileBales();
+// tileSetup.bales -> 15 balya, her biri 7 taş
+// tileSetup.remainingTile -> Artan 1 taş
+```
+
+---
+
 ### `getDealerRotationSequence()`
 Belirli sayıda tur için dağıtıcı sırasını gösterir (test/debug için).
 
